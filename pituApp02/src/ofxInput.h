@@ -25,6 +25,13 @@ public:
     
     void    setValue(float _value);
     float   getValue(){return value;};
+    float   getActiveValue(){
+        if ( value >= threshold ){
+            return value - threshold;
+        } else {
+            return 0.0;
+        }
+    };
     
     void    update();
     void    draw();

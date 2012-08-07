@@ -44,7 +44,7 @@ void ofxInput::update(){
         }
     }
     
-    color.setHue(value*100);
+    color.setHue(100-(value*100));
 };
 
 void ofxInput::draw(){

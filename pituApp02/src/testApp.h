@@ -34,6 +34,10 @@ public:
     ofxCvGrayscaleImage cvGrayImage;
     ofxCvGrayscaleImage cvGrayImagePrevius;
     ofxCvGrayscaleImage cvDiffImage;
+    ofxCvGrayscaleImage cvWarpImage;
+    ofxInput            cvBar;
+    ofPoint             srcPoints[4];
+    ofPoint             dstPoints[4];
     
     ofImage     arrow;
     ofColor     arrowColor;
