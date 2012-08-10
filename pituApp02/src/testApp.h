@@ -19,6 +19,9 @@ public:
     void windowResized(int w, int h);
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
+    
+    void startSpin();
+    void stopSpin(float &value);
 	
     //  Audio
     //
@@ -39,10 +42,14 @@ public:
     ofPoint             srcPoints[4];
     ofPoint             dstPoints[4];
     
+    ofxInput            mainBar;
+    
     ofImage     arrow;
+    ofImage     playImg;
     ofColor     arrowColor;
-    float       arrowPos;
+    float       arrowAngle;
     float       lerpVal;
 
     int         width, height;
+    bool        bDebug, bPlay;
 };

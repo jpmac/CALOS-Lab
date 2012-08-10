@@ -24,6 +24,12 @@ ofxInput::ofxInput(){
 
 void ofxInput::setValue(float _value){
     value = ofMap(_value, minValue, maxValue, 0.0, 1.0, true);
+    
+    color.setHue(100-(value*100));
+    
+    if ( value >= threshold){
+        ofNotifyEvent(thresholdTrigger, value);
+    }
 };
 
 void ofxInput::update(){
@@ -39,12 +45,12 @@ void ofxInput::update(){
             if ( !vertOriented ){
                 threshold = (mouseX - x) / width;
             } else {
-                threshold = (mouseY - y) / height;
+                threshold = 1.0 - ((mouseY - y) / height);
             }
         }
     }
     
-    color.setHue(100-(value*100));
+    
 };
 
 void ofxInput::draw(){
@@ -91,8 +97,8 @@ void ofxInput::draw(){
         //  Threshold Line
         //
         ofSetColor(255,150);
-        ofLine(0, threshold*height, 
-               width, threshold*height);
+        ofLine(0, height - threshold*height, 
+               width, height - threshold*height);
     }
     
     ofPopMatrix();
