@@ -6,40 +6,36 @@
 //  Copyright (c) 2012 PatricioGonzalezVivo.com. All rights reserved.
 //
 
-#ifndef OFXINPUTSENSORBAR
-#define OFXINPUTSENSORBAR
+#ifndef THRESHOLDBAR
+#define THRESHOLDBAR
 
 #include "ofMain.h"
+#include "ofxXmlSettings.h"
 
-class ofxInput : public ofRectangle {
+class ThresholdBar : public ofRectangle {
 public:
     
-    ofxInput();
+    ThresholdBar();
 
+    void    setLabel(string label = "none");
     void    setMin(float _minValue){minValue = _minValue;};
     void    setMax(float _maxValue){maxValue = _maxValue;};
     
     void    setVerticalOriented( bool _vert = true){ vertOriented = _vert;};
-    void    setThreshold(float _threshold){threshold = _threshold;};
+    void    setThreshold(float _threshold);
     float   getThreshold(){return threshold;};
     
     void    setValue(float _value);
     float   getValue(){return value;};
-    float   getActiveValue(){
-        if ( value >= threshold ){
-            return value - threshold;
-        } else {
-            return 0.0;
-        }
-    };
+    float   getActiveValue();
     
     ofEvent<float>  thresholdTrigger;
     
-    void    update();
+    void    updateGUI();
     void    draw();
     
 private:
-    
+    string  label;
     ofColor color;
     float   maxValue;
     float   minValue;

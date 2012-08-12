@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ofMain.h"
-#include "ofxInput.h"
-#include "ofxOpenCv.h"
+
+#include "VideoArea.h"
+#include "ThresholdBar.h"
 
 class testApp : public ofBaseApp{
 public:
@@ -23,33 +24,31 @@ public:
     void startSpin();
     void stopSpin(float &value);
 	
+    //  Video
+    //
+    VideoArea       video;
+    
     //  Audio
     //
     void audioIn(float * input, int bufferSize, int nChannels); 
     ofSoundStream   soundStream;
     float           smoothedVol;
-    ofxInput        micBar;
+    ThresholdBar    micBar;
     
-    //  Video
+    //  Main threshold Bar
     //
-    ofVideoGrabber      videoStream;
-    ofxCvColorImage     cvColorImage;
-    ofxCvGrayscaleImage cvGrayImage;
-    ofxCvGrayscaleImage cvGrayImagePrevius;
-    ofxCvGrayscaleImage cvDiffImage;
-    ofxCvGrayscaleImage cvWarpImage;
-    ofxInput            cvBar;
-    ofPoint             srcPoints[4];
-    ofPoint             dstPoints[4];
+    ThresholdBar    mainBar;
     
-    ofxInput            mainBar;
-    
-    ofImage     arrow;
-    ofImage     playImg;
-    ofColor     arrowColor;
-    float       arrowAngle;
-    float       lerpVal;
+    //  Arrow
+    //
+    ofImage         arrow;
+    ofImage         playImg;
+    ofColor         arrowColor;
+    float           arrowAngle, lerpVal;
 
-    int         width, height;
-    bool        bDebug, bPlay;
+    int             width, height;
+    
+    //  Flags
+    //
+    bool            bDebug, bPlay;
 };

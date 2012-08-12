@@ -1,0 +1,51 @@
+<main>
+    <x>5</x>
+    <y>5</y>
+    <width>100</width>
+    <height>10</height>
+    <thr>0.23</thr>
+    <min>0</min>
+    <max>0.3</max>
+</main>
+<mic>
+    <x>5</x>
+    <y>20</y>
+    <width>100</width>
+    <height>10</height>
+    <thr>0.28</thr>
+    <min>0</min>
+    <max>0.1</max>
+</mic>
+<video>
+    <x>5</x>
+    <y>35</y>
+    <width>100</width>
+    <height>10</height>
+    <thr>0.32</thr>
+    <min>0</min>
+    <max>0.1</max>
+</video>
+<videoArea>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+    <points>
+        <pts>
+            <x>293</x>
+            <y>185</y>
+        </pts>
+        <pts>
+            <x>496</x>
+            <y>161</y>
+        </pts>
+        <pts>
+            <x>496</x>
+            <y>401</y>
+        </pts>
+        <pts>
+            <x>298</x>
+            <y>385</y>
+        </pts>
+    </points>
+</videoArea>

@@ -9,10 +9,11 @@ void testApp::setup(){
     width = 640;
     height = 480;
 	
-	//soundStream.listDevices();
+    video.allocate(640, 480);
+    
+    //soundStream.listDevices();
 	//if you want to set a different device id 
 	//soundStream.setDeviceID(0); //bear in mind the device id corresponds to all audio devices, including  input-only and output-only devices.
-
 	soundStream.setup(this, 0, 2, 44100, 256, 4);
     // 0 output channels, 
 	// 2 input channels
@@ -20,34 +21,9 @@ void testApp::setup(){
 	// 256 samples per buffer
 	// 4 num buffers (latency)
     smoothedVol     = 0.0;
+    micBar.setLabel("mic");
     
-    micBar.setMax(0.1);
-    micBar.setThreshold(0.1);
-    micBar.x = 30;
-    micBar.y = height + 30;
-    
-    videoStream.initGrabber(width,height);
-    cvColorImage.allocate(width, height);
-    cvGrayImage.allocate(width, height);
-    cvGrayImagePrevius.allocate(width, height);
-    cvDiffImage.allocate(width, height);
-    cvWarpImage.allocate(width, height);
-    srcPoints[0] = dstPoints[0] = ofPoint(0,0);
-    srcPoints[1] = dstPoints[1] = ofPoint(width,0);
-    srcPoints[2] = dstPoints[2] = ofPoint(width,height);
-    srcPoints[3] = dstPoints[3] = ofPoint(0,height);
-    cvBar.setMax(0.1);
-    cvBar.setThreshold(0.1);
-    cvBar.x = srcPoints[3].x + 30;
-    cvBar.y = srcPoints[3].y + 20;
-
-    mainBar.setMax(0.3);
-    mainBar.setThreshold(0.1);
-    mainBar.x = 10;
-    mainBar.y = 10;
-    mainBar.width = 10;
-    mainBar.height = 100;
-    mainBar.setVerticalOriented();
+    mainBar.setLabel("main");
     ofAddListener(mainBar.thresholdTrigger, this, &testApp::stopSpin);
     
     //  Arrow
@@ -65,37 +41,16 @@ void testApp::setup(){
 //--------------------------------------------------------------
 void testApp::update(){
     
+    video.update();
+    
     micBar.setValue(smoothedVol);
-    micBar.update();
+    mainBar.setValue( (micBar.getActiveValue()+video.bar.getActiveValue())/(ofGetFrameRate()*0.1) );
     
-    videoStream.update();
-    
-    if ( videoStream.isFrameNew()){
-        cvColorImage.setFromPixels(videoStream.getPixels(), width, height);
-        
-        cvGrayImage = cvColorImage;
-        cvDiffImage.absDiff(cvGrayImage, cvGrayImagePrevius);
-        
-        cvWarpImage.warpIntoMe(cvDiffImage, srcPoints, dstPoints);
-        
-        unsigned char* pixels = cvWarpImage.getPixels();
-        
-        int size = width * height;
-        int tmp = 0;
-        for (int i = 0; i < size; i++){
-            tmp += pixels[i];
-        }
-        float average = (float)tmp/(float)size;
-        average /= 255;
-        
-        cvBar.setValue(average);
-        cvBar.update();
-        
-        cvGrayImagePrevius = cvGrayImage;
+    if (bDebug){
+        video.updateGUI();
+        micBar.updateGUI();
+        mainBar.updateGUI();
     }
-    
-    mainBar.setValue((micBar.getActiveValue()+cvBar.getActiveValue())/(ofGetFrameRate()*0.1));
-    mainBar.update();
     
     if (bPlay){
         arrowAngle += lerpVal ;
@@ -107,24 +62,16 @@ void testApp::draw(){
 	ofBackgroundGradient(ofColor::gray, ofColor::black);
     
     if (bDebug){
-        ofPushStyle();
-        ofSetColor(255);
-        cvColorImage.draw(0,0);
-        for(int i = 0; i < 4; i++){
-            ofSetColor(255,100);
-            ofRect(srcPoints[i].x-5,srcPoints[i].y-5,10,10);
-            ofLine(srcPoints[i], srcPoints[(i+1)%4]);
-        }
-        ofPopStyle();
-        
-        //  Draw the average volume:
+        //  Draw the average movement
         //
         ofSetColor(255);
-        ofDrawBitmapString("m:", 5, height + 39 );
-        micBar.draw();
+        video.draw();
+        
+        //  Draw the average volume
+        //
         ofSetColor(255);
-        ofDrawBitmapString("v:", srcPoints[3].x , srcPoints[3].y + 29 );
-        cvBar.draw();
+        micBar.draw();
+        
     } else {
     
         //  Dibuja la Flecha
@@ -136,11 +83,11 @@ void testApp::draw(){
                     ofGetHeight()*0.5);
         
         ofRotate(arrowAngle);
-        ofTranslate(-arrow.getWidth()*0.1, 
+        ofTranslate(-arrow.getWidth()*0.25, 
                     -arrow.getHeight()*0.5);
         
         ofSetColor(arrowColor);
-        arrow.draw(0, 0); //,arrow.getWidth()*0.5,arrow.getHeight()*0.5);
+        arrow.draw(0, 0);
         
         ofPopMatrix();
         ofPopStyle();
@@ -212,20 +159,7 @@ void testApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void testApp::mouseDragged(int x, int y, int button){
-    int selected = -1;
-    for(int i = 0; i < 4; i++){
-        if ( srcPoints[i].distance(ofPoint(x,y)) < 50){
-            srcPoints[i].x = x;
-            srcPoints[i].y = y;
-            selected = i;
-            break;
-        }
-    }
     
-    if (selected == 3){
-        cvBar.x = srcPoints[3].x + 20;
-        cvBar.y = srcPoints[3].y + 20;
-    }
 }
 
 //--------------------------------------------------------------
