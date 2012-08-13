@@ -26,15 +26,33 @@ void testApp::setup(){
     mainBar.setLabel("main");
     ofAddListener(mainBar.thresholdTrigger, this, &testApp::stopSpin);
     
+    //  Areas
+    areaNum = 3;
+    areas = new ofPolyline[areaNum];
+    areaAngle = (360.0/(float)(areaNum));
+    center = ofPoint(ofGetWidth()*0.5,ofGetHeight()*0.5);
+    for(int i = 0; i < areaNum; i++){
+        
+        int startAngle = i*areaAngle + areaAngle + 90*3;
+        int endAngle = ((i+1)%areaNum)*areaAngle + areaAngle + 90*3;
+        
+        areas[i].addVertex(center);
+        areas[i].arc(center, ofGetHeight()*0.5, ofGetHeight()*0.5, startAngle, endAngle, true, 360);
+        areas[i].close();
+    }
+    
     //  Arrow
     //
     playImg.loadImage("play.png");
     arrow.loadImage("arrow.png");
     arrowAngle = 0.0;
     arrowColor.set(255,0,0);
-    lerpVal = 0.5;
+    arrowColor.setHue(100);
+    arrowLerp = 0.5;
     
-    bDebug = true;
+    areaTarget = -1;
+    
+    bDebug = false;
     bPlay = false;
 }
 
@@ -53,8 +71,40 @@ void testApp::update(){
     }
     
     if (bPlay){
-        arrowAngle += lerpVal ;
+        arrowAngle += arrowLerp;
+    } else if (areaTarget != -1){
+        
+        if ( pointingTo.distance( areas[areaTarget].getCentroid2D() ) < 50 ){
+            areaTarget = -1;
+        } else {
+            ofPoint targetPosition;
+            targetPosition = areas[areaTarget].getCentroid2D();
+            targetPosition = targetPosition - center;
+            float targetAngle = ofRadToDeg(atan2(targetPosition.y,targetPosition.x));
+            arrowAngle = ofLerp(arrowAngle, targetAngle, 0.1);
+        }
     }
+    
+    if (arrowAngle > 360){
+        arrowAngle -= 360;
+    }
+    
+    pointingTo.x = cos( ofDegToRad(arrowAngle) ) * (ofGetWidth()*0.25);
+    pointingTo.y = sin( ofDegToRad(arrowAngle) ) * (ofGetHeight()*0.25);
+    pointingTo = pointingTo + center;
+    
+    for(int i = 0; i < areaNum; i++){
+        if( areas[i].inside( pointingTo ) ){
+            areaSelected = i;
+            break;
+        }
+    }
+    
+    cout << "Angle " << arrowAngle << endl;
+    cout << "Selected " << areaSelected << endl;
+    cout << "Target " << areaTarget << endl;
+    cout << endl;
+    
 }
 
 //--------------------------------------------------------------
@@ -74,7 +124,28 @@ void testApp::draw(){
         
     } else {
     
-        //  Dibuja la Flecha
+        //  Draw areas
+        //
+        ofPushStyle();
+        ofColor color;
+        color.set(255,0,0);
+        ofFill();
+        for(int i = 0; i < areaNum; i++){
+            float hue = float(i)/float(areaNum);
+            if (i == 0){
+                ofSetColor(100);
+            } else if ( i == 1){
+                ofSetColor(0, 255, 0);
+            } else if ( i == 2){
+                ofSetColor(255, 0, 0);
+            }
+            ofBeginShape();
+            ofVertexes(areas[i].getVertices());
+            ofEndShape();
+        }
+        ofPopStyle();
+        
+        //  Draw the arrow
         //
         ofPushStyle();
         ofPushMatrix();
@@ -86,13 +157,15 @@ void testApp::draw(){
         ofTranslate(-arrow.getWidth()*0.25, 
                     -arrow.getHeight()*0.5);
         
-        ofSetColor(arrowColor);
+        ofSetColor(255);
         arrow.draw(0, 0);
         
         ofPopMatrix();
         ofPopStyle();
         
+        ofSetColor(255);
         playImg.draw(ofGetWidth()*0.5-30,ofGetHeight()*0.5-30, 60, 60 );
+        
     }
     mainBar.draw();
 }
@@ -132,7 +205,11 @@ void testApp::startSpin(){
 }
 
 void testApp::stopSpin(float &value){
-    bPlay = false;
+    if ( bPlay ){
+        bPlay = false;
+    } else if ( areaTarget == -1 ){
+        areaTarget = (areaSelected+1)%areaNum;
+    }
 }
 
 //--------------------------------------------------------------
@@ -178,7 +255,18 @@ void testApp::mouseReleased(int x, int y, int button){
 
 //--------------------------------------------------------------
 void testApp::windowResized(int w, int h){
-
+    center = ofPoint(ofGetWidth()*0.5,ofGetHeight()*0.5);
+    
+    for(int i = 0; i < areaNum; i++){
+        
+        int startAngle = i*areaAngle + areaAngle + 90*3;
+        int endAngle = ((i+1)%areaNum)*areaAngle + areaAngle + 90*3;
+        
+        areas[i].clear();
+        areas[i].addVertex(center);
+        areas[i].arc(center, ofGetHeight()*0.5, ofGetHeight()*0.5, startAngle, endAngle, true, 360);
+        areas[i].close();
+    }
 }
 
 //--------------------------------------------------------------

@@ -39,16 +39,29 @@ public:
     //
     ThresholdBar    mainBar;
     
+    //  Areas
+    //
+    ofPolyline      *areas;
+    float           areaAngle;
+    int             areaNum;
+    int             areaTarget;
+    int             areaSelected;
+    
     //  Arrow
     //
     ofImage         arrow;
     ofImage         playImg;
+    ofPoint         center;
+    ofPoint         pointingTo;
     ofColor         arrowColor;
-    float           arrowAngle, lerpVal;
+    float           arrowAngle;
+    float           arrowLerp;
 
     int             width, height;
     
     //  Flags
     //
     bool            bDebug, bPlay;
+    
+    
 };
