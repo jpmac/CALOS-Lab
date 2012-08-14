@@ -15,6 +15,8 @@ Este proyecto junta a los distintos profesionales del ámbito de la salud con ar
 
 [Nicolás Diaz Cassataro]()
 
+[Juan Pablo MacDougall](http://www.ofmac.blogspot.com.ar)
+
 AGREGARSE!!!
 
 
