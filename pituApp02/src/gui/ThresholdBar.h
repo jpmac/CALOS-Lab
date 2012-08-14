@@ -10,7 +10,7 @@
 #define THRESHOLDBAR
 
 #include "ofMain.h"
-#include "ofxXmlSettings.h"
+#include "ofxXmlSettings.h"  // este include me apareció comentado
 
 class ThresholdBar : public ofRectangle {
 public:
@@ -34,6 +34,7 @@ public:
     void    updateGUI();
     void    draw();
     
+    ofxXmlSettings XML; // aunque está en el .cpp me aparecía como que no estaba declarada la variable
 private:
     string  label;
     ofColor color;
